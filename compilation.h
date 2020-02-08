@@ -24,6 +24,7 @@ AFN langage_mot_caractere(char * mot);
 void affichage_automate_AFN(AFN automate);
 DELTA* Copy_transition(AFN automate1, AFN automate2);
 AFN Concatenation_automates_standarts(AFN automate1, AFN automate2);
+AFN Reunion_automates_standards(AFN automate1, AFN automate2);
 
 
 #endif
