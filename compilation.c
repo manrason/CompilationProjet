@@ -1,6 +1,11 @@
 //#include <stdio.h>
 #include "compilation.h"
 
+
+/********************************************
+ Automate fini non déterministe
+ * ******************************************/
+
 // Automate standart reconnaissant le langage vide
 AFN langage_vide(){
 	AFN Automate;
@@ -217,7 +222,18 @@ AFN FermetureIterrative_automate_standart(AFN automate){
 		}
 	return automate;
 }
-	
+
+
+/********************************************
+ Automate fini non déterministe
+ * ******************************************/
+
+
+
+
+
+
+
 int main(int argc, char **argv)
 {
 	//int x=2;

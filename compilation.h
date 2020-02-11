@@ -5,6 +5,12 @@
 #include <string.h>
 
 
+
+/********************************************
+ Automate fini non déterministe
+ * ******************************************/
+
+
 typedef struct delta{
 		char caractere;
 		char etat_prec;
@@ -28,6 +34,13 @@ void affichage_automate_AFN(AFN automate);
 DELTA* Copy_transition(AFN automate1, AFN automate2);
 AFN Concatenation_automates_standarts(AFN automate1, AFN automate2);
 AFN FermetureIterrative_automate_standart(AFN automate);
+
+
+/********************************************
+ Automate fini déterministe
+ * ******************************************/
+
+
 
 
 #endif

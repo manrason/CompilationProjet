@@ -28,7 +28,7 @@ main: $(CLI_OBJECTS)
 	$(LINK) $(CLI_OBJECTS) $(LDADD) $(LIBS)
 	rm -f *.o
 	clear
-	./compilation
+	./main
 
 clean:
 	clear
