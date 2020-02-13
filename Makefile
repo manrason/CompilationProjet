@@ -6,7 +6,7 @@ GLUT_LIBS =
 X_LIBADD =  -lXmu -lXext -lXi -lX11
 INCLUDES = -Iinclude -I$(prefix)/include  
 LDADD =
-CFLAGS = -g -O2 -Wall -fomit-frame-pointer -ffast-math -fexpensive-optimizations -D_REENTRANT
+CFLAGS = -g -O2 -Wall -fomit-frame-pointer -ffast-math -D_REENTRANT
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
 LINK = $(CC) $(CFLAGS) $(LDFLAGS) -o $@
 

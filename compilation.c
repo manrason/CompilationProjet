@@ -187,6 +187,61 @@ AFN Concatenation_automates_standarts(AFN automate1, AFN automate2){
 	
 	return Automate;
 }
+/*
+//Automate reconnaissant la réunion des deux langages
+AFN Reunion_automates_standards(AFN automate1, AFN automate2)
+{
+	AFN Automate;
+	Automate.tailleQ = 0;
+	Automate.tailleF = 0;
+	Automate.tailleTab_transit = 0;
+	
+	//Etat initial
+	Automate.s=1;
+
+	//Ensemble des états
+	Automate.Q=malloc(sizeof(int)*(automate1.tailleQ + automate2.tailleQ - 1));
+	Automate.Q=automate1.Q - automate1.s + automate2.Q - automate2.s + Automate.s;
+	
+	//Ensemble des états finaux
+	if (strchr(automate1.F,automate1.s)!=NULL & (strchr(automate2.F,automate2.s)) !=NULL) // si l'état initial de l'automate1 et l'automate2 sont accepteurs
+	{
+		strcpy(Automate.F,automate1.F);
+		strcat(Automate.F,automate2.F);
+		strcat(Automate.F,&Automate.s); // F1\s1 U F2\s2 U s
+
+	}
+	else{ // si l'état initial de l'automate 1 et 2 ne sont pas accepteurs
+		strcpy(Automate.F,automate1.F);
+		strcat(Automate.F,automate2.F);
+	}
+
+	//Alphabet
+	Automate.Alphabet=malloc(sizeof(strlen(automate1.Alphabet) ));//+ strlen(automate2.Alphabet)));
+	strcpy(Automate.Alphabet, automate1.Alphabet);
+	//strcat(Automate.Alphabet, automate2.Alphabet);
+	
+	//Ensemble des transitions
+	Automate.tab_transition = malloc(sizeof(DELTA)*(sizeof(automate1.tab_transition)+ 1)); //sizeof(automate2.tab_transition)));
+	Automate.tailleTab_transit=automate1.tailleTab_transit+automate2.tailleTab_transit;
+	for (int i=0; i<Automate.tailleTab_transit;i++)  // rajoute de nouvelles transitions dans l'automate
+	{
+		for (int j=0; j<Automate.tailleF;j++)
+		{
+			Automate.tab_transition = realloc(Automate.tab_transition, sizeof(DELTA));
+			Automate.tab_transition[i].caractere = Automate.tab_transition[i].caractere;
+			Automate.tab_transition[i].etat_prec = Automate.F[j];
+			Automate.tab_transition[i].etat_suiv = Automate.tab_transition[i].etat_suiv;
+			Automate.tailleTab_transit += 1;
+		}
+		
+	}
+	Automate.tab_transition=automate1.tab_transition;
+
+
+	return Automate;
+}
+
 
 // Automate reconnaissant la fermeture iterrative d'un automate
 AFN FermetureIterrative_automate_standart(AFN automate){
@@ -222,12 +277,62 @@ AFN FermetureIterrative_automate_standart(AFN automate){
 		}
 	return automate;
 }
+*/
+/********************************************
+ Creation automate fini non-déterministe
+ * ******************************************/
+AFN creation_afn()
+{
+	AFN Automate;
+	Automate.F=malloc(sizeof(int));
+	Automate.F[0]=3;
+	Automate.tailleF = 1;
+	Automate.s=0;
+	Automate.Alphabet=malloc(sizeof(char)*2);
+	Automate.Alphabet[0] = 'a';
+	Automate.Alphabet[1] = 'b';
+	Automate.tab_transition = malloc(sizeof(DELTA)*6);
+	Automate.Q=malloc(sizeof(int));
+	Automate.Q[0]=0;
+	Automate.Q[1]=1;
+	Automate.Q[2]=2;
+	Automate.Q[3]=3;
+	Automate.tailleQ = 4;
+	Automate.tailleTab_transit = 6;
+	Automate.tab_transition[0].caractere = 'a';
+	Automate.tab_transition[0].etat_prec = 0;
+	Automate.tab_transition[0].etat_suiv = 0;
+
+	Automate.tab_transition[1].caractere = 'b';
+	Automate.tab_transition[1].etat_prec = 0;
+	Automate.tab_transition[1].etat_suiv = 0;
+
+	Automate.tab_transition[2].caractere = 'a';
+	Automate.tab_transition[2].etat_prec = 0;
+	Automate.tab_transition[2].etat_suiv = 1;
+
+	Automate.tab_transition[3].caractere = 'a';
+	Automate.tab_transition[3].etat_prec = 1;
+	Automate.tab_transition[3].etat_suiv = 2;
+
+	Automate.tab_transition[4].caractere = 'b';
+	Automate.tab_transition[4].etat_prec = 1;
+	Automate.tab_transition[4].etat_suiv = 2;
+
+	Automate.tab_transition[5].caractere = 'a';
+	Automate.tab_transition[5].etat_prec = 2;
+	Automate.tab_transition[5].etat_suiv = 3;
+	printf("\n");
+	return Automate;
+}
+
+
+
 
 
 /********************************************
- Automate fini non déterministe
+ Automate fini déterministe
  * ******************************************/
-
 
 
 
@@ -236,10 +341,9 @@ AFN FermetureIterrative_automate_standart(AFN automate){
 
 int main(int argc, char **argv)
 {
-	//int x=2;
-	char c=2;
-	printf("%c", c);
-	affichage_automate_AFN(langage_mot_caractere("aa"));
+	AFN automate_nd=creation_afn();
+	affichage_automate_AFN(automate_nd);
+	//affichage_automate_AFN(langage_mot_caractere("aa"));
 	//affichage_automate_AFN(Concatenation_automates_standarts(langage_mot_caractere("a"), langage_mot_caractere("b")));
 	//affichage_automate_AFN(FermetureIterrative_automate_standart(langage_mot_caractere("aaa")));
 	return 0;
