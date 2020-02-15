@@ -83,29 +83,33 @@ void affichage_automate_AFN(AFN automate)
 	
 }
 
-// Copie les transitions de deux automates dans un nouveau
-DELTA* Copy_transition(AFN automate1, AFN automate2){
+// Copie les transitions de deux automates dans Automate
+DELTA* Copy_transition(AFN automate1, AFN automate2, int* nbr){
 	DELTA* tab = (DELTA*) malloc(sizeof(automate1.tailleTab_transit));
 	int i,tailleTab=0;
 	for(i=0; i<automate1.tailleTab_transit;i++) // Copie les transitions de  l'automate1
 	{
-		printf("testla \n");
+		printf("testla0 \n");
 		tab[i].caractere = automate1.tab_transition[i].caractere;
 		tab[i].etat_prec = automate1.tab_transition[i].etat_prec;
 		tab[i].etat_suiv= automate1.tab_transition[i].etat_suiv;
 		tailleTab+=1;
 	}
+	int incr = 0;
 	for(i=0; i<automate2.tailleTab_transit;i++) // Copie les transitions de  l'automate2 qui ne sont pas relies a l'etat initial
 	{
 		if(automate2.tab_transition[i].etat_prec != automate2.s){
-			//printf("testla2 \n");
-			tab = realloc(tab, sizeof(DELTA));
-			tab[automate1.tailleTab_transit + i].caractere = automate2.tab_transition[i].caractere;
-			tab[automate1.tailleTab_transit + i].etat_prec = automate2.tab_transition[i].etat_prec;
-			tab[automate1.tailleTab_transit + i].etat_suiv= automate2.tab_transition[i].etat_suiv;
+			printf("testla2 \n");
+			tab = realloc(tab, sizeof(DELTA)*(tailleTab + 1));
+			tab[automate1.tailleTab_transit + incr].caractere = automate2.tab_transition[i].caractere;
+			tab[automate1.tailleTab_transit + incr].etat_prec = automate2.tab_transition[i].etat_prec + automate1.tailleQ - 1;
+			tab[automate1.tailleTab_transit + incr].etat_suiv= automate2.tab_transition[i].etat_suiv + automate1.tailleQ - 1;
 			tailleTab+=1;
+			incr += 1;
 		}
 	}
+	printf(" (%d,%c,%d) \t \n", tab[tailleTab-1].etat_prec,tab[tailleTab-1].caractere,tab[tailleTab-1].etat_suiv);
+	*nbr = tailleTab;
 	return tab;
 }
 
@@ -116,19 +120,20 @@ AFN Concatenation_automates_standarts(AFN automate1, AFN automate2){
 	Automate.tailleF = 0;
 	Automate.tailleTab_transit = 0;
 	int i,j,k=0;
+	int nbr; // contient le nombre de transitions copiees
 	Automate.Q=malloc(sizeof(int)*(automate1.tailleQ + automate2.tailleQ - 1));
 	//strcpy(Automate.Q, automate1.Q);
 	for(i=0; i<(automate1.tailleQ); i++){
 		Automate.Q[i] = automate1.Q[i];
 		Automate.tailleQ += 1;
 		}
-	for(i=0; i<(automate2.tailleQ); i++){
-		Automate.Q[automate1.tailleQ + i] = automate2.Q[i+1];
+	for(i=1; i<(automate2.tailleQ); i++){
+		Automate.Q[automate1.tailleQ + i-1] = automate2.Q[i] + automate1.tailleQ - 1;
 		Automate.tailleQ += 1;
 		}
 	for(j=0; j<(automate2.tailleF); j++){
 		if(automate2.F[j] == automate2.s){ // si l'etat initial de l'automate2 est accepteur
-			printf(" bjr1 \n");
+			//printf(" bjr1 \n");
 			Automate.F=malloc(sizeof(int)*automate1.tailleF);
 			//strcpy(Automate.F, automate1.F);
 			for(i=0; i<(automate1.tailleF); i++){
@@ -137,22 +142,23 @@ AFN Concatenation_automates_standarts(AFN automate1, AFN automate2){
 				}
 			for(i=0; i<automate2.tailleF; i++){
 				Automate.F = realloc(Automate.F, sizeof(int));
-				Automate.F[automate1.tailleF] = automate2.F[i+1];
-				Automate.tailleF += 1;
+				if(automate2.F[i] != 0){
+					Automate.F[automate1.tailleF + i] = automate2.F[i] + automate1.tailleQ - 1;
+					Automate.tailleF += 1;
 				}
+			}
 			k=1;
 			//strcat(Automate.F, automate2.F);
 			}
 		break;
-		printf(" HELLObjr0 \n");
 	}
 	if(k == 0){  // si l'etat initial de l'automate2 est non accepteur
-		printf(" HELLObjr2 \n");
+		//printf(" HELLObjr2 \n");
 		Automate.F = (int*)malloc((sizeof(int))*automate2.tailleF);
-		printf(" hello \n");
+		//printf(" hello \n");
 		//strcpy(Automate.F, automate2.F);
 		for(i=0; i<(automate2.tailleF); i++){
-			Automate.F[i] = automate2.F[i];
+			Automate.F[i] = automate2.F[i] + automate1.tailleQ - 1;
 			Automate.tailleF += 1;
 			}
 		}
@@ -165,7 +171,6 @@ AFN Concatenation_automates_standarts(AFN automate1, AFN automate2){
 	for (i=0; i<automate2.tailleTab_transit;i++)  // recherche l'alphabet ayant des transitions avec l'etat inititial de l'automate2
 	{
 		if(automate2.tab_transition[i].etat_prec == automate2.s){
-			printf(" bjr3 \n");
 			tabAlpha = realloc(tabAlpha, sizeof(char));
 			tabAlpha[i] = automate2.tab_transition[i].caractere;
 			tabEtat = realloc(tabEtat, sizeof(int));
@@ -173,18 +178,37 @@ AFN Concatenation_automates_standarts(AFN automate1, AFN automate2){
 		}
 	}
 	Automate.tab_transition = malloc((sizeof(DELTA))*(automate1.tailleTab_transit));
-	Automate.tailleTab_transit = automate1.tailleTab_transit;
-	Automate.tab_transition = Copy_transition(automate1, automate2);
+	for(i=0; i<automate1.tailleTab_transit;i++) // Copie les transitions de  l'automate1
+	{
+		Automate.tab_transition[i].caractere = automate1.tab_transition[i].caractere;
+		Automate.tab_transition[i].etat_prec = automate1.tab_transition[i].etat_prec;
+		Automate.tab_transition[i].etat_suiv= automate1.tab_transition[i].etat_suiv;
+		Automate.tailleTab_transit+=1;
+	}
+	int incr = 0;
+	for(i=0; i<automate2.tailleTab_transit;i++) // Copie les transitions de  l'automate2 qui ne sont pas relies a l'etat initial
+	{
+		if(automate2.tab_transition[i].etat_prec != automate2.s){
+			Automate.tab_transition = realloc(Automate.tab_transition, sizeof(DELTA)*(Automate.tailleTab_transit + 1));
+			Automate.tab_transition[automate1.tailleTab_transit + incr].caractere = automate2.tab_transition[i].caractere;
+			Automate.tab_transition[automate1.tailleTab_transit + incr].etat_prec = automate2.tab_transition[i].etat_prec + automate1.tailleQ - 1;
+			Automate.tab_transition[automate1.tailleTab_transit + incr].etat_suiv= automate2.tab_transition[i].etat_suiv + automate1.tailleQ - 1;
+			Automate.tailleTab_transit+=1;
+			incr += 1;
+		}
+	}
+	//Automate.tab_transition = Copy_transition(automate1, automate2, &nbr);
+	//Automate.tailleTab_transit = nbr;
+	nbr = Automate.tailleTab_transit;
 	for(i=0; i<automate1.tailleF; i++){  // Ajout de nouvelles transitions a l'Automate
-		printf(" bjr41 \n");
 		for(j=0; j<strlen(tabAlpha); j++){
-			printf(" bjr4 \n");
-			Automate.tab_transition[Automate.tailleTab_transit+i].caractere = tabAlpha[j];
-			Automate.tab_transition[Automate.tailleTab_transit+i].etat_prec = automate1.F[i];
-			Automate.tab_transition[Automate.tailleTab_transit+i].etat_suiv = tabEtat[j];
+			Automate.tab_transition = realloc(Automate.tab_transition, sizeof(DELTA)*(Automate.tailleTab_transit + 1));
+			Automate.tab_transition[nbr+i].caractere = tabAlpha[j];
+			Automate.tab_transition[nbr+i].etat_prec = automate1.F[i];
+			Automate.tab_transition[nbr+i].etat_suiv = tabEtat[j] + automate1.tailleQ - 1;
+			Automate.tailleTab_transit += 1;
 			}
 		}
-	
 	return Automate;
 }
 /*
@@ -334,17 +358,48 @@ AFN creation_afn()
  Automate fini déterministe
  * ******************************************/
 
-
+int verification_AFN(AFN automate) // verifi si un AFN est detreministe ou pas
+ {
+	int i,j,etat = 0;
+	int nbr_elt = 0;
+	char* tab = NULL;
+	for(i=0; i<(automate.tailleQ); i++){
+		for(j=0; j<(automate.tailleTab_transit); j++){
+			if(automate.Q[i] == automate.tab_transition[j].etat_prec){ // recopie toutes les carateres des transitions de l'etat i
+				tab = realloc(tab, sizeof(char)*(nbr_elt + 1));
+				tab[j] = automate.tab_transition[j].caractere;
+				nbr_elt+=1;
+				}
+			}
+		for(j=1; j<(nbr_elt); j++){
+			if(tab[j-1] == tab[j]){
+				etat = 1;
+				}
+			break;
+		}
+		if(etat != 0){
+			break;
+			}
+	free(tab);
+	}
+	return etat;
+}
 
 
 
 
 int main(int argc, char **argv)
 {
+<<<<<<< HEAD
+	//affichage_automate_AFN(langage_mot_caractere("aa"));
+	printf("%d \n", verification_AFN(langage_mot_caractere("aaaaa")));
+	//affichage_automate_AFN(Concatenation_automates_standarts(langage_mot_caractere("aa"), langage_mot_caractere("bb")));
+=======
 	AFN automate_nd=creation_afn();
 	affichage_automate_AFN(automate_nd);
 	//affichage_automate_AFN(langage_mot_caractere("aa"));
 	//affichage_automate_AFN(Concatenation_automates_standarts(langage_mot_caractere("a"), langage_mot_caractere("b")));
+>>>>>>> 3bb57506d50862418dda5199bc7d1aad52691230
 	//affichage_automate_AFN(FermetureIterrative_automate_standart(langage_mot_caractere("aaa")));
 	return 0;
 }

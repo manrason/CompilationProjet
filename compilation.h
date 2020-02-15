@@ -31,7 +31,7 @@ AFN langage_vide();
 AFN langage_mot_vide();
 AFN langage_mot_caractere(char * mot);
 void affichage_automate_AFN(AFN automate);
-DELTA* Copy_transition(AFN automate1, AFN automate2);
+DELTA* Copy_transition(AFN automate1, AFN automate2, int* nbr);
 AFN Concatenation_automates_standarts(AFN automate1, AFN automate2);
 //AFN Reunion_automates_standards(AFN automate1, AFN automate2);
 AFN FermetureIterrative_automate_standart(AFN automate);
@@ -41,6 +41,9 @@ AFN creation_afn();
 /********************************************
  Automate fini déterministe
  * ******************************************/
+<<<<<<< HEAD
+int verification_AFN(AFN automate);
+=======
 
 typedef struct Etat{
 	int valeur;
@@ -48,6 +51,7 @@ typedef struct Etat{
 	char* tab_alphabet;
 	int* tab_etat_suivant;
 	int taille_transition;
+>>>>>>> 3bb57506d50862418dda5199bc7d1aad52691230
 
 }ETAT;
 

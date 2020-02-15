@@ -9,6 +9,7 @@ LDADD =
 CFLAGS = -g -O2 -Wall -fomit-frame-pointer -ffast-math -D_REENTRANT
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
 LINK = $(CC) $(CFLAGS) $(LDFLAGS) -o $@
+#./main
 
 .SUFFIXES:
 .SUFFIXES: .cpp .c .o 
@@ -28,7 +29,7 @@ main: $(CLI_OBJECTS)
 	$(LINK) $(CLI_OBJECTS) $(LDADD) $(LIBS)
 	rm -f *.o
 	clear
-	./main
+	
 
 clean:
 	clear
