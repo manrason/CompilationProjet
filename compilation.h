@@ -12,10 +12,11 @@
 
 
 typedef struct delta{
-		char caractere;
-		char etat_prec;
-		char etat_suiv;
-	}DELTA;
+	char caractere;
+	char etat_prec;
+	char etat_suiv;
+}DELTA;
+
 typedef struct Automate_AFN{
 	char* Alphabet;
 	int s;
@@ -41,9 +42,7 @@ AFN creation_afn();
 /********************************************
  Automate fini déterministe
  * ******************************************/
-int verification_AFN(AFN automate);
-AFD creation_afd();
-Bool reconnnaissance_mot(AFD automate, char* mot);
+
 
 typedef struct Etat{
 	int valeur;
@@ -67,6 +66,9 @@ typedef struct Automate_AFD{
 	int tailleQ;
 }AFD;
 
+int verification_AFN(AFN automate);
+//AFD creation_afd();
+//Bool reconnnaissance_mot(AFD automate, char* mot);
 
 //copie AFN vers AFD
 //verification AFN

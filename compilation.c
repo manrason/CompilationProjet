@@ -302,6 +302,9 @@ AFN FermetureIterrative_automate_standart(AFN automate){
 	return automate;
 }
 */
+
+
+
 /********************************************
  Creation automate fini non-déterministe
  * ******************************************/
@@ -363,6 +366,7 @@ int verification_AFN(AFN automate) // verifi si un AFN est detreministe ou pas
 	int i,j,etat = 0;
 	int nbr_elt = 0;
 	char* tab = NULL;
+	//tab non alloué
 	for(i=0; i<(automate.tailleQ); i++){
 		for(j=0; j<(automate.tailleTab_transit); j++){
 			if(automate.Q[i] == automate.tab_transition[j].etat_prec){ // recopie toutes les carateres des transitions de l'etat i
@@ -524,11 +528,11 @@ AFD determinisation (AFN automate)
 
 int main(int argc, char **argv)
 {
-	//affichage_automate_AFN(langage_mot_caractere("aa"));
+	affichage_automate_AFN(langage_mot_caractere("aa"));
 	printf("%d \n", verification_AFN(langage_mot_caractere("aaaaa")));
 	//affichage_automate_AFN(Concatenation_automates_standarts(langage_mot_caractere("aa"), langage_mot_caractere("bb")));
-	AFN automate_nd=creation_afn();
-	affichage_automate_AFN(automate_nd);
+	//AFN automate_nd=creation_afn();
+	//affichage_automate_AFN(automate_nd);
 	//affichage_automate_AFN(langage_mot_caractere("aa"));
 	//affichage_automate_AFN(Concatenation_automates_standarts(langage_mot_caractere("a"), langage_mot_caractere("b")));
 	//affichage_automate_AFN(FermetureIterrative_automate_standart(langage_mot_caractere("aaa")));
