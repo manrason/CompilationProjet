@@ -41,9 +41,9 @@ AFN creation_afn();
 /********************************************
  Automate fini déterministe
  * ******************************************/
-<<<<<<< HEAD
 int verification_AFN(AFN automate);
-=======
+AFD creation_afd();
+Bool reconnnaissance_mot(AFD automate, char* mot);
 
 typedef struct Etat{
 	int valeur;
@@ -51,10 +51,12 @@ typedef struct Etat{
 	char* tab_alphabet;
 	int* tab_etat_suivant;
 	int taille_transition;
->>>>>>> 3bb57506d50862418dda5199bc7d1aad52691230
 
 }ETAT;
 
+typedef enum
+{ False = 0, True = 1 }
+Bool;
 
 typedef struct Automate_AFD{
 	ETAT s;
@@ -64,6 +66,7 @@ typedef struct Automate_AFD{
 	ETAT* Q;
 	int tailleQ;
 }AFD;
+
 
 //copie AFN vers AFD
 //verification AFN

@@ -386,20 +386,151 @@ int verification_AFN(AFN automate) // verifi si un AFN est detreministe ou pas
 }
 
 
+/*
+AFD creation_afd()
+{
+	AFD automate;
+	automate.Alphabet=malloc(sizeof(char)*2);
+	automate.Alphabet[0] = 'a';
+	automate.Alphabet[1] = 'b';
+	printf("alphabet ok \n");
+	
+	automate.F=malloc(sizeof(int));
+	automate.F->valeur=2;
+	automate.F->accepteur=1;
+	automate.tailleF = 1;
+	printf("etat final ok \n");
+
+	automate.Q=malloc(sizeof(ETAT)*3);
+	automate.tailleQ=3;
+	automate.Q->tab_alphabet=(char*)malloc(sizeof(char)*3);
+	automate.Q->tab_etat_suivant=(int*)malloc(sizeof(int)*3);
+
+	
+	ETAT etat_0,etat_1,etat_2;
+	automate.Q[0]=etat_0;
+	automate.Q[1]=etat_1;
+	automate.Q[2]=etat_2;
+
+	etat_0.valeur=0;
+	etat_0.accepteur=0;
+	etat_0.tab_alphabet[0]='a';
+	etat_0.tab_etat_suivant[0]=1;
+	etat_0.taille_transition=1;
+	printf("etat 0 ok \n");
+
+	etat_1.valeur=1;
+	etat_1.accepteur=0;
+	etat_1.tab_alphabet[0]='b';
+	etat_1.tab_etat_suivant[0]=2;
+	etat_1.taille_transition=1;
+	printf("etat 1 ok \n");
+
+	etat_2.valeur=2;
+	etat_2.accepteur=1;
+	etat_2.tab_alphabet[0]='a';
+	etat_2.tab_etat_suivant[0]=2;
+	etat_2.tab_alphabet[1]='b';
+	etat_2.tab_etat_suivant[1]=2;
+	etat_2.taille_transition=2;
+	printf("etat 2 ok \n");
+	
+
+	return automate;
+
+}
+*/
+
+/*
+Bool reconnnaissance_mot(AFD automate, char* mot)
+{
+	Bool reconnu;
+	ETAT etat_actuel=automate.s; //Le processus commence à l’état de départ q0
+	for (int i=0; i < strlen(mot);i++) //Les symboles du mot sont lus les uns après les les autres.
+	{
+		etat_actuel.tab_etat_suivant[i]=mot[i];
+	}
+
+//À la lecture de chaque symbole, on emploie la fonction de transition δ pour se déplacer vers le prochain état (en utilisant l’état actuel et le caractère qui vient d’être lu).
+
+
+	for (int k=0;k<automate.tailleF;k++) 
+	{	
+		if (etat_actuel.tab_etat_suivant[strlen(mot)]==automate.F->tab_alphabet[k])
+		{
+			reconnu=1; //le mot reconnu <=> le dernier état (qui lit le dernier caractère du mot) est un état de F.
+
+			printf("mot reconnu \n");
+
+		}
+		else
+		{
+			reconnu=0;
+			printf("mot non reconnu \n");
+		}
+	}
+	return reconnu;
+}
+*/
+
+/*
+AFD determinisation (AFN automate)
+{
+	AFD automate_fd;
+
+	//Les alphabets restent identiques
+	automate_fd.Alphabet=malloc(sizeof(strlen(automate.Alphabet)));
+
+	//Ensemble des nouveaux états
+	automate_fd.Q=malloc(sizeof(int)*(automate.tailleQ)-1); //Q est initialisé à ∅
+
+	ETAT* ensemble_etat;
+	ETAT element,element_courant; //creation respectivement S et S'
+	ensemble_etat[0].valeur=automate.s; //E un ensemble d’états initialisé à E = {{q0}}
+
+	while(ensemble_etat!=NULL)
+	{
+		for (int i=0;i<ensemble_etat->taille_transition;i++)//Parcours de E
+		{
+			element=ensemble_etat[i]; //choisir un élément S de E (S est donc un sous ensemble de Qn)
+			for (int j=0;j<automate_fd.tailleQ;j++)
+			{
+				automate_fd.Q[j]=element;//ajouter S à Qd
+			}
+			for (int k=0;k<strlen(automate.Alphabet);k++) //pour tout symbole a ∈ Σ
+			{
+				//calcul l’état S′ = ∪q ∈ S δn(q, a)
+				element_courant.tab_alphabet=automate.tab_transition[k].caractere;
+				//si S′ n’est pas déjà dans Qd, l’ajouter à E
+				if (element_courant.valeur != automate_fd.Q)
+				{
+					for(int l=0;l<ensemble_etat->taille_transition;l++)
+					{
+						ensemble_etat[l]=element_courant;	
+					}
+				}
+				else //ajouter un arc sur l’automate entre S et S′ et la valuer par a
+				{
+					element_courant.tab_alphabet=k
+				}
+			}
+		}
+	}
+	return automate_fd;
+}
+*/
+
 
 
 int main(int argc, char **argv)
 {
-<<<<<<< HEAD
 	//affichage_automate_AFN(langage_mot_caractere("aa"));
 	printf("%d \n", verification_AFN(langage_mot_caractere("aaaaa")));
 	//affichage_automate_AFN(Concatenation_automates_standarts(langage_mot_caractere("aa"), langage_mot_caractere("bb")));
-=======
 	AFN automate_nd=creation_afn();
 	affichage_automate_AFN(automate_nd);
 	//affichage_automate_AFN(langage_mot_caractere("aa"));
 	//affichage_automate_AFN(Concatenation_automates_standarts(langage_mot_caractere("a"), langage_mot_caractere("b")));
->>>>>>> 3bb57506d50862418dda5199bc7d1aad52691230
 	//affichage_automate_AFN(FermetureIterrative_automate_standart(langage_mot_caractere("aaa")));
 	return 0;
 }
