@@ -1,6 +1,7 @@
 //#include <stdio.h>
 #include "compilation.h"
 
+#define TAILLE_MAX_BUFFER 100
 
 /********************************************
  Automate fini non déterministe
@@ -487,79 +488,143 @@ void affichage_automate_AFD(AFD automate){
 	printf("L'ensemble des transitions = ");
 	for (int i=0; i<automate.tailleQ ;i++)
 	{
-		printf(" (%d,%c,%d) \t ", automate.tab_transition[i].etat_prec,automate.tab_transition[i].caractere,automate.tab_transition[i].etat_suiv);
+		for (int j=0; j<automate.Q[i].taille_transition ;j++)
+		{
+			printf(" (%d,%c,%d) \t ", automate.Q[i].valeur, automate.Q[i].tab_alphabet[j] ,automate.Q[i].tab_etat_suivant[j]);
+		}
 	}
-	printf(" bjr \n");
+	printf(" \n");
 	
 }
 
-/*
+
 int reconnnaissance_mot(AFD automate, char* mot)
 {
-	Bool reconnu;
+	int reconnu=0,accepte=1;
 	ETAT etat_actuel=automate.s; //Le processus commence à l’état de départ q0
-	for (int i=0; i < strlen(mot);i++) //Les symboles du mot sont lus les uns après les les autres.
+	
+	int compteur=0;
+	for (int i=0; i<strlen(mot) ;i++)
 	{
-		etat_actuel.tab_etat_suivant[i]=mot[i];
-	}
-//À la lecture de chaque symbole, on emploie la fonction de transition δ pour se déplacer vers le prochain état (en utilisant l’état actuel et le caractère qui vient d’être lu).
-	for (int k=0;k<automate.tailleF;k++) 
-	{	
-		if (etat_actuel.tab_etat_suivant[strlen(mot)]==automate.F->tab_alphabet[k])
+		for (int j=0; j<etat_actuel.taille_transition ;j++)
 		{
-			reconnu=1; //le mot reconnu <=> le dernier état (qui lit le dernier caractère du mot) est un état de F.
-			printf("mot reconnu \n");
+			if( etat_actuel.tab_alphabet[j] == mot[compteur])
+			{
+				etat_actuel=automate.Q[etat_actuel.tab_etat_suivant[j]];
+				compteur+=1;
+				reconnu=1;
+				break;
+			}
+			
 		}
-		else
-		{
-			reconnu=0;
-			printf("mot non reconnu \n");
+		if (reconnu!=1){
+			accepte=0;
+			break;
 		}
+		
 	}
-	return reconnu;
-}*/
+	if(etat_actuel.accepteur!=1) //on verifie qu'au dernier caractere du mot, l'etat actuel soit un etat accepteur
+	{
+		accepte=0;
+	}
+	return accepte;
+}
 
 /*
+ETAT copie_etat_afn_etat_afd(AFN automate, int indice)
+{
+	
+	ETAT etat_0;
+	etat_0.tab_alphabet=NULL;
+	etat_0.tab_etat_suivant=NULL;
+	etat_0.taille_transition=0;
+	etat_0.valeur=automate.Q[indice];
+	etat_0.accepteur=0;
+	
+	for(int i=0;i<automate.tailleF;i++)
+	{
+		if (etat_0.valeur==automate.F[i])
+		{
+			etat_0.accepteur=1;
+			break;
+		}
+	}
+	
+	for (int i=0; i<automate.tailleTab_transit;i++)  
+	{
+		if(automate.tab_transition[i].etat_prec == automate.Q[indice])
+		{
+			etat_0.tab_alphabet=realloc(etat_0.tab_alphabet,sizeof(char)*(etat_0.strlen(etat_0.tab_alphabet)+1));
+			etat_0.tab_etat_suivant=realloc(etat_0.tab_etat_suivant,sizeof(int)*(etat_0.taille_transition+1));
+			etat_0.tab_alphabet[i]=automate.tab_transition[i].caractere;
+			etat_0.tab_etat_suivant[i]=automate.tab_transition[i].etat_suiv;
+			etat_0.taille_transition+=1;
+		}
+	}
+	return etat_0;
+}
+
 AFD determinisation (AFN automate)
 {
 	AFD automate_fd;
-	//Les alphabets restent identiques
-	automate_fd.Alphabet=malloc(sizeof(strlen(automate.Alphabet)));
-	//Ensemble des nouveaux états
-	automate_fd.Q=malloc(sizeof(int)*(automate.tailleQ)-1); //Q est initialisé à ∅
+	automate_fd.tailleF=0;
+	automate_fd.tailleQ=0;
+	automate_fd.Q=malloc(sizeof(ETAT));
+	
+	
+	ETAT etat_0, etat_nouveau; //creation de S et S'
+	etat_0=copie_etat_afn_etat_afd(automate,O);
+	
+	
 	ETAT* ensemble_etat;
-	ETAT element,element_courant; //creation respectivement S et S'
-	ensemble_etat[0].valeur=automate.s; //E un ensemble d’états initialisé à E = {{q0}}
-	while(ensemble_etat!=NULL)
+	ensemble_etat=malloc(sizeof(ETAT));
+	ensemble_etat[0]=etat_0;
+	int taille_tab_etat=1;
+	
+	automate_fd.Q[0]=etat_0; // ajout de S a Qd
+	automate_fd.tailleQ+=1;
+	
+	
+	for (int i=0; i< strlen(automate.Alphabet);i++)  //pour tout symbole de l'alphabet
 	{
-		for (int i=0;i<ensemble_etat->taille_transition;i++)//Parcours de E
+		for(int k=0;k< (strlen(etat_0.tab_alphabet);k++)
 		{
-			element=ensemble_etat[i]; //choisir un élément S de E (S est donc un sous ensemble de Qn)
-			for (int j=0;j<automate_fd.tailleQ;j++)
+			if(etat_0.tab_alphabet[k]==automate.Alphabet[i])
 			{
-				automate_fd.Q[j]=element;//ajouter S à Qd
+				etat_nouveau=copie_etat_afn_etat_afd(automate,etat_0.tab_etat_suivant[k]);
+				break;
 			}
-			for (int k=0;k<strlen(automate.Alphabet);k++) //pour tout symbole a ∈ Σ
+			
+		}
+		int reconnu=1;
+		for (int l=0;l<automate_fd.tailleQ;l++)
+		{
+			if (etat_nouveau.valeur==automate_fd.Q[l]) //si S' est dans Qd
 			{
-				//calcul l’état S′ = ∪q ∈ S δn(q, a)
-				element_courant.tab_alphabet=automate.tab_transition[k].caractere;
-				//si S′ n’est pas déjà dans Qd, l’ajouter à E
-				if (element_courant.valeur != automate_fd.Q)
-				{
-					for(int l=0;l<ensemble_etat->taille_transition;l++)
-					{
-						ensemble_etat[l]=element_courant;	
-					}
-				}
-				else //ajouter un arc sur l’automate entre S et S′ et la valuer par a
-				{
-					element_courant.tab_alphabet=k
-				}
+				reconnu=0;
 			}
 		}
+		if (reconnu==1)
+		{
+			ensemble_etat=realloc(ensemble_etat,sizeof(ETAT)*taille_tab_etat+1);
+			ensemble_etat[taille_tab_etat]=etat_nouveau;
+			taille_tab_etat+=1;
+		}
+		free (etat_0.tab_alphabet);
+		free (etat_0.tab_etat_suivant);
+		etat_0.tailleTab_transit=0;
+		
+		//creation arc entre S et S' par le symbole lu de l'alphabet
+		etat_0.tab_alphabet=malloc(sizeof(char));
+		etat_0.tab_etat_suivant=malloc(sizeof(int));
+		etat_0.tab_alphabet[0]=automate.Alphabet[i];
+		etat_0.tab_etat_suivant[0]=etat_nouveau.valeur;
+		etat_0.tailleTab_transit+=1;
+		
 	}
-	return automate_fd;
-}	*/
+*/		
+	
+	
 /*void choix_menu(char choix){
 	char chaine[10];
 	char chaine1[10];
@@ -616,8 +681,74 @@ void menu(){
 
 int main(int argc, char **argv)
 {
-	//menu();
-	affichage_automate_AFD(creation_afd());
+	/*long choix;
+	char lettre;
+	char buffer[TAILLE_MAX_BUFFER];
+	printf("\t********************* PROJET COMPILATION ********************\n\n");
+	printf("(0) Quitter\n(1) Langage vide\n(2) Mot vide\n(3) Un mot\n");
+	printf("(4) Réunion\n(5) Concaténation\n(6) Mise à l'étoile\n");
+	printf("(7) Exécution d'un mot\n(8) Déterminisation\n(9) Minimisation\n");		printf("\n \t\t\t Entrer votre choix: ");
+	fgets(buffer,TAILLE_MAX_BUFFER,stdin);
+	choix = atoi(buffer);
+	do{
+		
+		char chaine[10];
+		char chaine1[10];
+		char chaine2[10];
+		switch(choix){
+			case 0: //quitter
+				break;
+			case 1: //Langage vide
+				affichage_automate_AFN(langage_vide());
+				break;
+			case 2: //Mot vide
+				affichage_automate_AFN(langage_mot_vide());
+				break;
+			case 3: //Un mot
+				printf("\n entrer une chaine d'un seul caratere:  ");
+			scanf(" %s ", chaine);
+			affichage_automate_AFN(langage_mot_caractere(chaine));
+				break;				
+			case 4://réunion
+					printf("\n entrer une chaine d'un seul caratere:  ");
+			scanf(" %s ", chaine1);
+			printf("\n entrer une deuxieme chaine d'un seul caratere:  ");
+			scanf(" %s ", chaine2);
+			affichage_automate_AFN(Reunion_automates_standards(langage_mot_caractere(chaine1), langage_mot_caractere(chaine2)));
+				break;
+					
+			case 5: //concaténation
+					printf("\n entrer une chaine d'un seul caratere:  ");
+			scanf(" %s ", chaine1);
+			printf("\n entrer une deuxieme chaine d'un seul caratere:  ");
+			scanf(" %s ", chaine2);
+			affichage_automate_AFN(Concatenation_automates_standarts(langage_mot_caractere(chaine1), langage_mot_caractere(chaine2)));
+				break;
+			case 6: //mise à l'étoile
+			printf("\n entrer une chaine d'un seul caratere:  ");
+			scanf(" %s ", chaine);
+			affichage_automate_AFN(FermetureIterrative_automate_standart(langage_mot_caractere(chaine1)));
+				break;
+				
+			case 7: //exécution d'un mot
+				printf(" (valeur 1 pour mot accepte et 0 dans le cas contraire) %d \n", reconnnaissance_mot(creation_afd(),"abbabb"));	
+				break;
+				
+			case 8: //déterminisation
+					
+				break;
+				
+			case 9: //minimisation
+					
+				break;
+			default:
+				printf("veillez choisir un numero de la liste\n");
+				
+				break;
+		}
+	} while(choix != 0);*/
+	//affichage_automate_AFD(creation_afd());
+	//printf(" (valeur 1 pour mot accepte et 0 dans le cas contraire) %d \n", reconnnaissance_mot(creation_afd(),"abbabb"));
 	//affichage_automate_AFN(langage_mot_caractere("aa"));
 	//printf("%d \n", verification_AFN(langage_mot_caractere("aaaaa")));
 	//affichage_automate_AFN(Reunion_automates_standards(langage_mot_caractere("aa"), langage_mot_caractere("bb")));

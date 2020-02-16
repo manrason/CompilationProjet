@@ -40,6 +40,10 @@ AFN creation_afn();
 /********************************************
  Automate fini déterministe
  * ******************************************/
+typedef enum
+{ False = 0, True = 1 }
+Bool;  // structure booléenne dans le but de 
+
 
 typedef struct Etat{
 	int valeur;
@@ -65,8 +69,9 @@ void choix_menu(char choix);
 AFD creation_afd();
 void affichage_automate_AFD(AFD automate);
 int reconnnaissance_mot(AFD automate, char* mot);
-//copie AFN vers AFD
 int verification_AFN(AFN automate);
-//determinisation
+ETAT copie_etat_afn_etat_afd(AFN automate, int indice);
+AFD determinisation (AFN automate);
+
 
 #endif
