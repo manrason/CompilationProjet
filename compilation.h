@@ -31,7 +31,6 @@ AFN langage_vide();
 AFN langage_mot_vide();
 AFN langage_mot_caractere(char * mot);
 void affichage_automate_AFN(AFN automate);
-DELTA* Copy_transition(AFN automate1, AFN automate2, int* nbr);
 AFN Concatenation_automates_standarts(AFN automate1, AFN automate2);
 AFN Reunion_automates_standards(AFN automate1, AFN automate2);
 AFN FermetureIterrative_automate_standart(AFN automate);
