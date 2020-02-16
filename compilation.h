@@ -12,11 +12,10 @@
 
 
 typedef struct delta{
-	char caractere;
-	char etat_prec;
-	char etat_suiv;
-}DELTA;
-
+		char caractere;
+		char etat_prec;
+		char etat_suiv;
+	}DELTA;
 typedef struct Automate_AFN{
 	char* Alphabet;
 	int s;
@@ -34,7 +33,7 @@ AFN langage_mot_caractere(char * mot);
 void affichage_automate_AFN(AFN automate);
 DELTA* Copy_transition(AFN automate1, AFN automate2, int* nbr);
 AFN Concatenation_automates_standarts(AFN automate1, AFN automate2);
-//AFN Reunion_automates_standards(AFN automate1, AFN automate2);
+AFN Reunion_automates_standards(AFN automate1, AFN automate2);
 AFN FermetureIterrative_automate_standart(AFN automate);
 AFN creation_afn();
 
@@ -42,7 +41,6 @@ AFN creation_afn();
 /********************************************
  Automate fini déterministe
  * ******************************************/
-
 
 typedef struct Etat{
 	int valeur;
@@ -53,9 +51,6 @@ typedef struct Etat{
 
 }ETAT;
 
-typedef enum
-{ False = 0, True = 1 }
-Bool;
 
 typedef struct Automate_AFD{
 	ETAT s;
@@ -66,12 +61,13 @@ typedef struct Automate_AFD{
 	int tailleQ;
 }AFD;
 
-int verification_AFN(AFN automate);
-//AFD creation_afd();
-//Bool reconnnaissance_mot(AFD automate, char* mot);
-
+void menu();
+void choix_menu(char choix);
+AFD creation_afd();
+void affichage_automate_AFD(AFD automate);
+int reconnnaissance_mot(AFD automate, char* mot);
 //copie AFN vers AFD
-//verification AFN
+int verification_AFN(AFN automate);
 //determinisation
 
 #endif
